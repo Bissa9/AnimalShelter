@@ -1,10 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-
-public class AnimalService : IAnimalService 
+public class AnimalService : IAnimalService
 {
     private readonly IAnimalRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AnimalService(IAnimalRepository repositor, IUnitOfWork UnitOfWork)
+    public AnimalService(
+        IAnimalRepository repository,
+        IUnitOfWork unitOfWork)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
@@ -15,9 +16,10 @@ public class AnimalService : IAnimalService
         return await _repository.GetAllAsync();
     }
 
-   public async Task<AnimalDto?> GetByIdAsync(int id)
-{
-    var animal = await _repository.GetByIdAsync(id);
+    public async Task<AnimalDto?> GetByIdAsync(int id)
+    {
+        var animal = await _repository.GetByIdAsync(id);
+
         if (animal == null)
             return null;
 
@@ -31,8 +33,7 @@ public class AnimalService : IAnimalService
             ShelterName = animal.Shelter?.Name ?? "",
             ShelterLocation = animal.Shelter?.Location ?? ""
         };
-        
-}
+    }
 
     public async Task<Animal> CreateAsync(Animal animal)
     {
@@ -45,8 +46,7 @@ public class AnimalService : IAnimalService
 
     public async Task<bool> UpdateAsync(int id, Animal animal)
     {
-        var updated = await _repository.UpdateAsync(id, animal)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        var updated = await _repository.UpdateAsync(id, animal);
 
         if (!updated)
             return false;
@@ -59,12 +59,9 @@ public class AnimalService : IAnimalService
     public async Task<bool> DeleteAsync(int id)
     {
         var deleted = await _repository.DeleteAsync(id);
-            
 
         if (!deleted)
             return false;
-
-        _db.Animals.Remove(animal);
 
         await _unitOfWork.SaveChangesAsync();
 
