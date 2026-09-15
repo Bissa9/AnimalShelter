@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AnimalShelter.API/AnimalShelter.API.csproj" />
+  <Project Path="AnimalShelter.Application/AnimalShelter.Application.csproj" />
+  <Project Path="AnimalShelter.Domain/AnimalShelter.Domain.csproj" />
+  <Project Path="AnimalShelter.Infrastructure/AnimalShelter.Infrastructure.csproj" />
+  <Project Path="AnimalShelter.Tests/AnimalShelter.Tests.csproj" />
+</Solution>
