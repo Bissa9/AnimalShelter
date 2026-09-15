@@ -101,7 +101,7 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         connectionString,
-        ServerVersion.AutoDetect(connectionString)
+        new MySqlServerVersion(new Version(8, 4, 0))
     ));
 
 
@@ -189,14 +189,22 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
+    using var scope = app.Services.CreateScope();
+
     var db = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
     await db.Database.MigrateAsync();
 
-    await DbSeeder.SeedAsync(db);
+    var passwordHasher =
+        scope.ServiceProvider
+            .GetRequiredService<IPasswordHasher<User>>();
+
+    await DbSeeder.SeedAsync(
+        db,
+        passwordHasher);
 }
 
 // --------------------------------------------------

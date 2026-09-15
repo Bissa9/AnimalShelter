@@ -6,13 +6,13 @@ using Xunit;
 
 namespace AnimalShelter.Tests.Integration;
 
+[Collection("Integration Tests")]
 public class ConcurrencyTests
-    : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly AnimalShelterWebApplicationFactory _factory;
 
     public ConcurrencyTests(
-        WebApplicationFactory<Program> factory)
+        AnimalShelterWebApplicationFactory factory)
     {
         _factory = factory;
     }

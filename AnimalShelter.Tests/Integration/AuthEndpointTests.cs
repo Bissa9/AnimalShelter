@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace AnimalShelter.Tests.Integration;
 
+[Collection("Integration Tests")]
 public class AuthEndpointTests
-    : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly AnimalShelterWebApplicationFactory _factory;
 
     public AuthEndpointTests(
-        WebApplicationFactory<Program> factory)
+        AnimalShelterWebApplicationFactory factory)
     {
         _factory = factory;
     }

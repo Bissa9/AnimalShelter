@@ -1,13 +1,15 @@
 using AnimalShelter.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnimalShelter.Infrastructure.Data;
 
 public static class DbSeeder
 {
-    public static async Task SeedAsync(AppDbContext db)
+    public static async Task SeedAsync(
+        AppDbContext db,
+        IPasswordHasher<User> passwordHasher)
     {
-        // Create shelters only if none exist
         if (!await db.Shelters.AnyAsync())
         {
             var shelters = new List<Shelter>
@@ -30,7 +32,6 @@ public static class DbSeeder
             await db.SaveChangesAsync();
         }
 
-        // Create animals only if none exist
         if (!await db.Animals.AnyAsync())
         {
             var animals = new List<Animal>
@@ -74,6 +75,23 @@ public static class DbSeeder
             };
 
             await db.Animals.AddRangeAsync(animals);
+            await db.SaveChangesAsync();
+        }
+
+        if (!await db.Users.AnyAsync(u => u.Username == "bissa"))
+        {
+            var user = new User
+            {
+                Username = "bissa",
+                Role = "admin"
+            };
+
+            user.PasswordHash =
+                passwordHasher.HashPassword(
+                    user,
+                    "mypassword123");
+
+            await db.Users.AddAsync(user);
             await db.SaveChangesAsync();
         }
     }
