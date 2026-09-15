@@ -3,17 +3,43 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - develop
+      - master
 
   pull_request:
     branches:
-      - main
-      - develop
+      - master
 
 jobs:
   build-test-docker:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: AnimalShelterDb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -prootpassword"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    env:
+      ConnectionStrings__DefaultConnection: "Server=127.0.0.1;Port=3306;Database=AnimalShelterDb;User=root;Password=rootpassword;"
+      Redis__Connection: "127.0.0.1:6379"
 
     steps:
       - name: Checkout repository
