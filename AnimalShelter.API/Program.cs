@@ -231,20 +231,16 @@ app.UseRateLimiter();
 // OpenAPI
 // --------------------------------------------------
 
-if (app.Environment.IsDevelopment() ||
-    app.Environment.IsProduction())
+app.MapOpenApi();
+
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi("/openapi/{documentName}.json");
+    options.RoutePrefix = "swagger";
 
-    app.UseSwaggerUI(options =>
-    {
-        options.RoutePrefix = "swagger";
-
-        options.SwaggerEndpoint(
-            "/openapi/v1.json",
-            "Animal Shelter API");
-    });
-}
+    options.SwaggerEndpoint(
+        "/openapi/v1.json",
+        "Animal Shelter API");
+});
 
 // --------------------------------------------------
 // Test endpoint
