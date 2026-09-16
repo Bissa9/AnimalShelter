@@ -198,13 +198,16 @@ if (!app.Environment.IsEnvironment("Testing"))
 
     await db.Database.MigrateAsync();
 
-    var passwordHasher =
-        scope.ServiceProvider
-            .GetRequiredService<IPasswordHasher<User>>();
+    if (app.Environment.IsDevelopment())
+    {
+        var passwordHasher =
+            scope.ServiceProvider
+                .GetRequiredService<IPasswordHasher<User>>();
 
-    await DbSeeder.SeedAsync(
-        db,
-        passwordHasher);
+        await DbSeeder.SeedAsync(
+            db,
+            passwordHasher);
+    }
 }
 
 // --------------------------------------------------
