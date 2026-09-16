@@ -47,6 +47,8 @@ builder.Services.AddOpenApi(options =>
     options.AddOperationTransformer<BearerSecurityRequirementTransformer>();
 });
 
+builder.Services.AddEndpointsApiExplorer();
+
 // --------------------------------------------------
 // Authentication
 // --------------------------------------------------
@@ -232,10 +234,12 @@ app.UseRateLimiter();
 if (app.Environment.IsDevelopment() ||
     app.Environment.IsProduction())
 {
-    app.MapOpenApi();
+    app.MapOpenApi("/openapi/{documentName}.json");
 
     app.UseSwaggerUI(options =>
     {
+        options.RoutePrefix = "swagger";
+
         options.SwaggerEndpoint(
             "/openapi/v1.json",
             "Animal Shelter API");
